@@ -7,9 +7,10 @@
 #
 # Structure for table "test"
 #
-
 CREATE TABLE `test` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pnt` point NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+  PRIMARY KEY (`id`),
+  SPATIAL KEY `pnt` (`pnt`)
+) ENGINE=MyISAM AUTO_INCREMENT=1028490 DEFAULT CHARSET=gbk;
+

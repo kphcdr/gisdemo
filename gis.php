@@ -1,14 +1,17 @@
 <?php
-
+/**
+ * 计算特定距离内的点
+ * @author kphcdr@163.com
+ */
 class gis 
 {
-	private $m;
+	private $m;#数据库对象
 	private $x;#当前精度116.40741300000002
 	private $y;#当前维度39.904214
 	public function __construct()
 	{
 		$this->m = new mysqli('127.0.0.1','root','root','geodatabase');
-		if($this->m->connect_error ) {
+		if($this->m->connect_error ){
 		    exit($this->m->connect_error);
 		}
 	}
@@ -17,6 +20,7 @@ class gis
 	 * @param 经度 float $x 116.40741300000002
 	 * @param 维度 float $y 39.904214
 	 * @param 距离等级 int $length
+	 * @return array
 	 */
 	public function area($x,$y,$level=1,$limit='0,10')
 	{
@@ -27,8 +31,8 @@ class gis
 		$sql = "SELECT id,AsText(pnt) from test where $areastr ,GeomFromText(AsText(pnt))) LIMIT $limit";
 		$result = $this->m->query($sql);
 		$return = [];
-		while($a = $result->fetch_assoc()) {
-			$return[] = $a;
+		while($row = $result->fetch_assoc()) {
+			$return[] = $row;
 		}	
 		return $return;
 	}
@@ -37,11 +41,9 @@ class gis
 	 * 获取给定地点的范围矩形
 	 * @param 范围等级 int  $level 
 	 * @return array
-	 * @author kphcdr@163.com
 	 */
 	private function getOrthogon($level = 1)
 	{
-		
 		//根据等级，画一个矩形
 		switch($level)
 		{
@@ -89,16 +91,8 @@ class gis
 				$area['rightx'] = $this->x + 0.1;
 				$area['righty'] = $this->y;
 				break;
-			case 5:
-				$area['topx'] = $this->x;
-				$area['topy'] = $this->y + 1;
-				$area['bomx'] = $this->x;
-				$area['bomy'] = $this->y - 1;
-				$area['leftx'] = $this->x - 1;
-				$area['lefty'] = $this->y;
-				$area['rightx'] = $this->x + 1;
-				$area['righty'] = $this->y;
-				break;
+			default :
+				exit('There is no level');
 		}
 		return $area;
 		/*
